@@ -184,6 +184,16 @@ assets into immutable images and cache config/routes/views at startup.
    Re-run with `--build` to deploy new code; the entrypoint re-caches config on
    each start.
 
+4. **Create the first admin** (a fresh database has no users; everyone else
+   joins via invites that only an admin can create):
+
+   ```sh
+   docker compose -f docker-compose.prod.yml exec app \
+     php artisan app:create-admin <telegram-id> "<name>" --username=<handle>
+   ```
+
+   That user can then open the Mini App and invite the rest of the team.
+
 The deployment is otherwise self-configuring:
 
 - **Telegram webhook** is registered automatically on every container start
