@@ -8,4 +8,8 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Point the Telegram bot at this deployment's public URL. Idempotent and
+# safe to re-run on every start; no-ops if the bot isn't configured yet.
+php artisan telegram:set-webhook || true
+
 exec docker-php-entrypoint "$@"

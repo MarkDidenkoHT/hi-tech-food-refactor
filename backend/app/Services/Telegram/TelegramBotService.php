@@ -31,6 +31,21 @@ class TelegramBotService
     }
 
     /**
+     * Register a webhook URL with Telegram. The secret token is echoed back by
+     * Telegram in the X-Telegram-Bot-Api-Secret-Token header on every call.
+     */
+    public function setWebhook(string $url, string $secretToken): bool
+    {
+        $response = Http::asJson()->post("https://api.telegram.org/bot{$this->botToken}/setWebhook", [
+            'url' => $url,
+            'secret_token' => $secretToken,
+            'allowed_updates' => ['message'],
+        ]);
+
+        return $response->successful() && $response->json('ok') === true;
+    }
+
+    /**
      * Build an inline keyboard with a single button that opens the Mini App.
      *
      * @return array<string, mixed>

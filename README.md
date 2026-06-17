@@ -166,29 +166,34 @@ assets into immutable images and cache config/routes/views at startup.
 1. **Create the shared network** (once): `docker network create main`. A reverse
    proxy on this network terminates TLS and routes to the `web` service.
 
-2. **Prepare `backend/.env`** with production values:
-   - `APP_ENV=production`, `APP_DEBUG=false`, `LOG_LEVEL=warning`
-   - a generated `APP_KEY` (`php artisan key:generate --show`)
-   - a strong `DB_PASSWORD`, real Telegram + WooCommerce secrets, and `APP_URL`
-   - `CORS_ALLOWED_ORIGINS` / `SANCTUM_STATEFUL_DOMAINS` set to your domain
+2. **Prepare `backend/.env`** from the production template and fill in real
+   values (domain, secrets, a strong `DB_PASSWORD`):
+
+   ```sh
+   cp backend/.env.production.example backend/.env
+   docker compose -f docker-compose.prod.yml run --rm app php artisan key:generate
+   ```
 
 3. **Build and start**, then run migrations:
 
    ```sh
-   DB_PASSWORD=... docker compose -f docker-compose.prod.yml up -d --build
+   docker compose -f docker-compose.prod.yml up -d --build
    docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
    ```
 
    Re-run with `--build` to deploy new code; the entrypoint re-caches config on
    each start.
 
-4. **Rotate any secret that ever lived in git history or client code** before
-   going live (notably the Telegram bot token and the WooCommerce reservations
-   token from the legacy app).
+The deployment is otherwise self-configuring:
 
-The `scheduler` service runs `schedule:work` (photo reminders, expired-token
-pruning). API tokens expire after `SANCTUM_TOKEN_EXPIRATION` minutes; the Mini
-App re-authenticates on every open.
+- **Telegram webhook** is registered automatically on every container start
+  (from `APP_URL` + `TELEGRAM_WEBHOOK_SECRET`) — no manual `setWebhook` call.
+- **Database** persists in the `restaurant_app_pgdata` named volume across
+  rebuilds and recreations; only `docker compose -f docker-compose.prod.yml
+  down -v` (or deleting that volume) destroys it.
+- The **scheduler** runs photo-question reminders and daily expired-token
+  pruning. API tokens expire after `SANCTUM_TOKEN_EXPIRATION` minutes; the
+  Mini App re-authenticates on every open.
 
 ## Security notes
 

@@ -74,7 +74,11 @@ services:
       - main
 
 volumes:
+  # Pinned name so the database volume is reused across rebuilds and even if
+  # the compose project name changes. Only `down -v` (or deleting this volume)
+  # destroys the data.
   pgdata:
+    name: restaurant_app_pgdata
 
 networks:
   main:
