@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ExampleTest extends TestCase
+class AppShellTest extends TestCase
 {
     /**
      * The Mini App shell loads successfully.
