@@ -1,0 +1,26 @@
+# Build artifacts and deps — reinstalled/rebuilt inside the image stages.
+backend/node_modules
+backend/vendor
+backend/public/build
+backend/public/hot
+backend/public/storage
+
+# Secrets and env — injected at runtime via env_file, never baked in.
+**/.env
+**/.env.*
+!**/.env.example
+
+# Laravel runtime state.
+backend/storage/logs/*
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/bootstrap/cache/*.php
+
+# VCS, tooling, docs, and PII that don't belong in the image.
+.git
+.gitattributes
+.claude
+*.xlsx
+README.md
+docker-compose*.yml

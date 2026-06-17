@@ -1,0 +1,77 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-restaurant_app}
+      POSTGRES_USER: ${DB_USERNAME:-restaurant_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-restaurant_app}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - main
+
+  app:
+    build:
+      context: ./docker/php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - main
+
+  scheduler:
+    build:
+      context: ./docker/php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    command: php artisan schedule:work
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - main
+
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - main
+
+  node:
+    image: node:22-alpine
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    command: sh -c "npm install && npm run build"
+    profiles:
+      - build
+    networks:
+      - main
+
+volumes:
+  pgdata:
+
+networks:
+  main:
+    external: true

@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+:root {
+    --tg-theme-bg-color: #f3f4f6;
+    --tg-theme-secondary-bg-color: #ffffff;
+    --tg-theme-text-color: #111827;
+    --tg-theme-hint-color: #6b7280;
+    --tg-theme-link-color: #2563eb;
+    --tg-theme-button-color: #2563eb;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-destructive-text-color: #dc2626;
+    --tg-theme-section-separator-color: #e5e7eb;
+}
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-bg: var(--tg-theme-bg-color);
+    --color-surface: var(--tg-theme-secondary-bg-color);
+    --color-text: var(--tg-theme-text-color);
+    --color-hint: var(--tg-theme-hint-color);
+    --color-link: var(--tg-theme-link-color);
+    --color-button: var(--tg-theme-button-color);
+    --color-button-text: var(--tg-theme-button-text-color);
+    --color-destructive: var(--tg-theme-destructive-text-color);
+    --color-separator: var(--tg-theme-section-separator-color);
+}
+
+html,
+body,
+#app {
+    min-height: 100%;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}

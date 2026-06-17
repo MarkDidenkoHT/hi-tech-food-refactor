@@ -1,0 +1,14 @@
+# Real user data export — contains PII, never commit
+restaurant app data.xlsx
+
+# Environment files (docker-compose root .env)
+.env
+
+# Spreadsheet import working copy (PII)
+backend/storage/app/imports/
+
+# Local Claude Code tooling state (machine-specific)
+.claude/
+
+.DS_Store
+Thumbs.db
