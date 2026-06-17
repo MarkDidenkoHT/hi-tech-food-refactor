@@ -220,6 +220,32 @@ class StoplistTest extends TestCase
         });
     }
 
+    public function test_store_escapes_user_text_in_telegram_message(): void
+    {
+        Http::fake();
+
+        $restaurant = $this->createHardcodedMenuRestaurant();
+        $restaurant->update(['telegram_group_chat_id' => 123456]);
+        MenuItem::create(['restaurant_id' => $restaurant->id, 'name' => 'Окрошка с говядиной', 'sort_order' => 1, 'is_active' => true]);
+        $user = $this->createUserFor($restaurant, Role::Manager);
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson('/api/stoplist', [
+                'restaurant_id' => $restaurant->id,
+                'section' => 'kitchen',
+                'status' => 'stop',
+                'item' => 'Окрошка с говядиной',
+                'comment' => 'сломалось <b>срочно</b>',
+            ])
+            ->assertCreated();
+
+        Http::assertSent(function ($request) {
+            return str_contains($request->url(), '/sendMessage')
+                && str_contains($request['text'], 'сломалось &lt;b&gt;срочно&lt;/b&gt;')
+                && ! str_contains($request['text'], '<b>срочно</b>');
+        });
+    }
+
     public function test_store_does_not_send_telegram_message_when_chat_id_not_configured(): void
     {
         Http::fake();

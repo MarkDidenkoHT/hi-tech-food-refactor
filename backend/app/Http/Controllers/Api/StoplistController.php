@@ -192,7 +192,7 @@ class StoplistController extends Controller
             StoplistStatus::Play->value => '🔥 <b>ПРОДАЁМ</b>',
         ];
 
-        $message = sprintf('<b>%s</b> | Стоп-лист — %s', now()->format('d.m.Y'), $restaurant->name);
+        $message = sprintf('<b>%s</b> | Стоп-лист — %s', now()->format('d.m.Y'), e($restaurant->name));
 
         foreach (StoplistSection::cases() as $section) {
             $sectionEntries = $entries->where('section', $section);
@@ -212,10 +212,10 @@ class StoplistController extends Controller
                 }
 
                 $lines = $statusEntries->map(function (StoplistEntry $entry) {
-                    $line = '- '.$entry->item;
+                    $line = '- '.e($entry->item);
 
                     if ($entry->comment !== '') {
-                        $line .= " — {$entry->comment}";
+                        $line .= ' — '.e($entry->comment);
                     }
 
                     return $line;
@@ -241,13 +241,13 @@ class StoplistController extends Controller
         $message = sprintf(
             "%s | %s\n%s — %s",
             $statusLabel,
-            $restaurant->name,
+            e($restaurant->name),
             $sectionLabel,
-            $entry->item,
+            e($entry->item),
         );
 
         if ($entry->comment !== '') {
-            $message .= sprintf("\n<i>%s</i>", $entry->comment);
+            $message .= sprintf("\n<i>%s</i>", e($entry->comment));
         }
 
         return $message;
@@ -262,9 +262,9 @@ class StoplistController extends Controller
         return sprintf(
             "%s | %s\n%s — %s",
             $title,
-            $restaurant->name,
+            e($restaurant->name),
             $sectionLabel,
-            $entry->item,
+            e($entry->item),
         );
     }
 }

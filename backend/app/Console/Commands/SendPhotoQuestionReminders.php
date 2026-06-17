@@ -54,7 +54,7 @@ class SendPhotoQuestionReminders extends Command
             $nextIndex = $currentIndex === false ? 0 : ($currentIndex + 1) % $questions->count();
             $next = $questions->get($nextIndex);
 
-            $telegram->sendMessage($restaurant->telegram_group_chat_id, "📸 <b>Фото-вопрос</b>\n{$next->question}");
+            $telegram->sendMessage($restaurant->telegram_group_chat_id, "📸 <b>Фото-вопрос</b>\n".e($next->question));
 
             $restaurant->update(['last_photo_question_id' => $next->id]);
         }

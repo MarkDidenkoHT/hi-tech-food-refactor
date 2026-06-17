@@ -110,7 +110,7 @@ class TelegramWebhookController extends Controller
 
         $this->bot->sendMessage(
             $chatId,
-            "Welcome, {$firstName}! Tap the button below to open the app.",
+            'Welcome, '.e($firstName).'! Tap the button below to open the app.',
             $this->bot->miniAppKeyboard('Open App', $appUrl)
         );
     }
